@@ -19,8 +19,8 @@
 # ansible-galaxy collection install community.rabbitmq ------- install this before running playbook
 - name: Creating rabbitmq user
   community.rabbitmq.rabbitmq_user: 
-    user: roboshop
-    password: roboshop123
+    user: "{{rabbitmq_user}}"
+    password: "{{rabbitmq_password}}"
     state: present
     vhost: /
     configure_priv: .*
