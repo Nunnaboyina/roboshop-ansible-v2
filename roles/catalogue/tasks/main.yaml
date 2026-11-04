@@ -1,6 +1,6 @@
 - name: testing vars and defaults
   debug:
-    msg: "user: {{user}}, version: {{verison}}, duration: {{duration}} "
+    msg: "user: {{user}}, version: {{version}}, duration: {{duration}} "
 
 - name: application set up
   include_role:
