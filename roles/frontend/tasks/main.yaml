@@ -1,0 +1,58 @@
+- name: disabling default nginx
+  command: dnf module disable nginx -y
+
+- name: enabling nginx 1.26
+  command: dnf module enable nginx:1.26 -y
+
+- name: install nginx
+  package:
+    name: nginx
+    state: present
+
+- name: Start & enable the Nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+    
+- name: find all the files and folder in nginx directory #remove the default content inside directory
+  ansible.builtin.find:
+    paths: /usr/share/nginx/html/
+    recurse: yes
+    hidden: yes  # Includes hidden files like .htaccess if present
+    file_type: any
+  register: directory_content
+
+- name: Clear all contents inside the Nginx directory
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ directory_content.files }}"
+
+- name: get the url
+  get_url:
+    url: https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/frontend-v4.zip
+    dest: /tmp/frontend.zip
+
+
+- name: unarchive the zip file
+  unarchive:
+    src: /tmp/frontend.zip
+    dest: /usr/share/nginx/html
+    remote_src: yes
+
+- name: copy the roboshop conf file
+  template:
+    src: roboshop.conf.j2
+    dest: /etc/nginx/default.d/roboshop.conf
+  notify: restart nginx
+  
+- name: 
+  command: nginx -t
+  register: check_configuration
+
+- name: checking the nginx configuration
+  debug:
+    msg: "{{check_configuration}}"
+  
+
