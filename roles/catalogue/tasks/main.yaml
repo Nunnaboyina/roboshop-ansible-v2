@@ -1,25 +1,18 @@
-- name: ansible common role
+- name: application set up
   include_role:
     name: common
     tasks_from: app-setup
 
+- name: nodejs installation
+  include_role: 
+    name: common # folder name
+    tasks_from: nodejs # yaml file name 
 
 
-# - name: Disable nodejs
-#     command: dnf module disable nodejs -y
-
-# - name: Enable nodejs version 24
-#   command: dnf module enable nodejs:24 -y
-
-# - name: install nodejs
-#   package:
-#     name: nodejs
-#     state: present
 
 
-# - name: Install npm dependencies from package.json
-#   community.general.npm:
-#     path: /app
+
+
 
 # - name: configure catalogue service  ## here, we are normally copyign the text. we are chaging the file 
 #   template:
