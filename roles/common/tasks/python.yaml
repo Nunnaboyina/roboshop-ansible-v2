@@ -1,0 +1,23 @@
+- name: install python 3.14 version
+  dnf:
+    name: 
+    - python3.14
+    - python3.14-pip
+    state: present
+  tags:
+    - execute
+
+- name: 
+  command: python3.14 --version
+  register: python_version
+
+- name: checking python version
+  debug:
+    msg: "{{python_version}}"
+
+    
+- name: create virtual environment
+  ansible.builtin.pip:
+    requirements: /app/requirements.txt
+    virtualenv: /app/.venv
+    virtualenv_command: python3.14 -m venv
