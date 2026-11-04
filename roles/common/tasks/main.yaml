@@ -1,0 +1,3 @@
+- name: common role tasks for all playbooks
+  debug:
+    msg: "Hi, from common role"
