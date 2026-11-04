@@ -1,0 +1,38 @@
+
+
+- name: application set up
+  include_role:
+    name: common
+    tasks_from: app-setup
+
+- name: java installation
+  include_role:
+    name: common
+    tasks_from: java
+
+- name: checking the cities data exist or not
+  command: mysql -h "{{mysql_host}}" -u root -p{{mysql_root_password}} -N -B -e "SELECT COUNT(*) FROM cities.cities;"
+  register: count_cities
+  ignore_errors: true  #### whenever we download the data, for sure there might be data available or not. 
+  # so, we need set ignore_errors: True [to handle errors]. when ansible gets rc=1 error, ansible stops and exits. 
+
+- name: download all cities
+  shell: mysql -h {{mysql_host}} -uroot -p{{mysql_root_password}} < /app/db/master-data.sql
+  when: count_cities.rc != 0 or count_cities.stdout | int == 0
+
+- name: create system user
+  shell: mysql -h {{mysql_host}} -uroot -p{{mysql_root_password}} < /app/db/app-user.sql
+  
+- name: systemd set up
+  include_role:
+    name: common
+    tasks_from: systemd-setup
+
+
+- name: restart application
+  include_role:
+    name: common
+    tasks_from: restart
+
+
+  

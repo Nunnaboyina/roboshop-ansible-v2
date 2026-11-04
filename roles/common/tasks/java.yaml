@@ -1,0 +1,20 @@
+- name: enable maven 3.9
+  command: dnf module enable maven:3.9 -y
+- name: install maven and java
+  dnf:
+    name:
+      - maven
+      - java-25-openjdk-devel   # no need to create JAVA HOME
+      - mysql
+      - maven-openjdk25
+    state: present
+
+- name: build shipping
+  command: mvn clean package
+  args: 
+    chdir: /app
+
+- name: moving shipping.jar 
+  command: mv target/shipping.jar shipping.jar
+  args:
+    chdir: /app
