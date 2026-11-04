@@ -1,0 +1,3 @@
+- name: printing dependency role
+  debug:
+    msg: "This is a dependency role"
