@@ -1,0 +1,33 @@
+
+- name: Setting up rabbitmq repo file
+  copy:
+    src: rabbitmq.repo
+    dest: /etc/yum.repos.d/rabbitmq.repo
+
+- name: Install Erlang and RabbitMQ
+  dnf:
+    name:
+    - erlang
+    - rabbitmq-server
+    state: present
+
+- name: Enabled and start RabbitMQ service
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: yes
+# ansible-galaxy collection install community.rabbitmq ------- install this before running playbook
+- name: Creating rabbitmq user
+  community.rabbitmq.rabbitmq_user: 
+    user: roboshop
+    password: roboshop123
+    state: present
+    vhost: /
+    configure_priv: .*
+    write_priv: .*
+    read_priv: .*
+- name: restart RabbitMQ service
+  service:
+    name: rabbitmq-server
+    state: restarted
+
