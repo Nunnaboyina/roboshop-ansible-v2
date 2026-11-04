@@ -1,68 +1,21 @@
-- name: diable nodejs
-   command: dnf module disable nodejs -y
+- name: node js installation
+  include_role:
+    name: common
+    tasks_from: nodejs
 
-- name: enable nodejs
-  command: dnf module enable nodejs:24 -y
-
-- name: install node js 
-  dnf:
-    name: nodejs
-    state: present
-
-- name: creating system user
-  user:
-    name: roboshop
-    create_home: false
-    system: true
-    home: /app    #default path : /home/roboshop
-    shell: /sbin/nologin
-    comment: "roboshop system user"
-
-- name: delete /app directory
-  file:
-    path: /app
-    state: absent
-
-- name: remove downloaded application
-  file:
-    path: /tmp/cart.zip
-    state: absent
-
-- name: create app directory
-  file:
-    path : /app
-    state: directory
-
-# ansible-playbook 07-cart.yaml -e "app_version=v4"
-- name: download application 
-  get_url:
-    url: https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/cart-{{ app_version }}.zip
-    dest: /tmp/cart.zip
-
-- name: unarchive the cart.zip
-  unarchive:
-    src: /tmp/cart.zip
-    dest: /app
-    remote_src: yes
+- name: application set up
+  include_role:
+    name: common
+    tasks_from: app-setup
 
 
-- name: install npm dependencies
-  community.general.npm:
-    path: /app
+- name: systemd set up
+  include_role: 
+    name: common
+    tasks_from: systemd-setup
 
 
-- name: configure cart service
-  template:
-    src: cart.service.j2
-    dest: /etc/systemd/system/cart.service
-
-- name: demon reload
-  systemd_service:
-    daemon_reload: true
-
-- name: enable and start cart service
-  service:
-    name: cart
-    state: started
-    enabled: yes
-
+- name: restart the application
+  include_role:
+    name: common
+    tasks_from: restart

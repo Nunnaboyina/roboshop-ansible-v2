@@ -1,64 +1,20 @@
-- name: disable node js
-  command: dnf module disable nodejs -y
+- name: nodejs installation
+  include_role:
+    name: common
+    tasks_from: nodejs
 
-- name: enabled node js 24
-  command: dnf module enable nodejs:24 -y
+- name: application set up 
+  include_role:
+    name: common
+    tasks_from: app-setup
 
-- name: install node js
-  dnf:
-    name: nodejs
-    state: present
-
-- name: creating system user
-  user:
-    name: roboshop
-    create_home: false
-    system: true
-    home: /app    #default path : /home/roboshop
-    shell: /sbin/nologin
-    comment: "roboshop system user"
-
-- name: delete the existing app directory
-  file:
-    path: /app
-    state: absent
-
-- name: remove the usre.zip file
-  file:
-    path: /tmp/user.zip
-    state: absent
-
-- name: create app directory
-  file:
-    path: /app
-    state: directory
-
-- name: download the application
-  get_url:
-    url: https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/user-v4.zip
-    dest: "/tmp/user.zip"
-
-- name: unarchive the files 
-  ansible.builtin.unarchive:
-    src: /tmp/user.zip
-    dest: /app
-    remote_src: yes
-
-- name: install dependencies
-  community.general.npm:
-    path: /app
     
-- name: configure systemd service file
-  template:
-    src: user.service.j2
-    dest: /etc/systemd/system/user.service
+- name: systemd set up
+  include_role: 
+    name: common
+    tasks_from: systemd-setup
 
-- name: daemon reload
-  ansible.builtin.systemd_service:
-    daemon_reload: true
-
-- name: start and enable user
-  service:
-    name: user
-    state: started
-    enabled: yes
+- name: restart the application
+  include_role:
+    name: common
+    tasks_from: restart
