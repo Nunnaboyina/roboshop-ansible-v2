@@ -12,11 +12,11 @@
 
 - name: systemd setup
   include_role:
-    name: command
+    name: common
     tasks_from: systemd-setup
 
   
 - name: restart application
   include_role:
-    name: command
+    name: common
     tasks_from: restart
