@@ -67,9 +67,7 @@
       zone: "{{domain_name}}"
       record: "{{domain_name}}"
       type: A
-      value: "{{ item.instances[0].public_ip_address }}"
-      loop: "{{ instances }}"
-    when: action == "delete" and item == "frontend" 
+    when: action == "delete" 
 
   - name: deleting instances
     amazon.aws.ec2_instance:
