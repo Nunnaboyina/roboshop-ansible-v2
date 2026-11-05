@@ -2,7 +2,7 @@
   hosts: local
   connection: local
   vars:
-    instances: ['mongodb', 'redis', 'mysql', 'rabbitmq', 'catalogue', 'user', 'cart', 'shipping', 'payment', 'frontend']
+    instances: ['mongodbbb', 'redis', 'mysql', 'rabbitmq', 'catalogue', 'user', 'cart', 'shipping', 'payment', 'frontend']
     action: create
     domain_name: saidevops.shop
   tasks:
